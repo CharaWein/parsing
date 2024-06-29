@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
 
 import cgi
+import sqlite3
+
+conn = sqlite3.connect('database.db')
+c = conn.cursor()
+ 
+def create_table():
+    c.execute('CREATE TABLE IF NOT EXISTS parsing(id INTEGER, name TEXT, salary TEXT, experience TEXT, employment TEXT, url TEXT, adress TEXT, area TEXT, requirment TEXT, responsibility TEXT, roles TEXT)')
+ 
+def data_entry(id, name, salary, experience, employment, url, adress, area, requirment, responsibility, roles):
+    c.execute("INSERT INTO parsing(id, name, salary, experience, employment, url, adress, area, requirment, responsibility, roles) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (id, name, salary, experience, employment, url, adress, area, requirment, responsibility, roles))
+    conn.commit()
+
+
 
 our_form = cgi.FieldStorage()
 
@@ -40,11 +53,12 @@ def get_vacancies(keyword):
     if response.status_code == 200:
         data = response.json()
         vacancies = data.get("items", [])
+        create_table() #Создание бд
         for vacancy in vacancies:
             published_at = vacancy.get("published_at")
             if published_at >= _published_at:
                 company_name = vacancy.get("employer", {}).get("name")
-                if (company_name == _company_name) or (_company_name == ''):
+                if (_company_name in company_name ) or (_company_name == ''):
                     vacancy_id = vacancy.get("id")
                     vacancy_title = vacancy.get("name")
                     vacancy_salary = vacancy.get("salary")
@@ -60,9 +74,14 @@ def get_vacancies(keyword):
                     print(f"Зарплата: {vacancy_salary}\n<br>") 
                     print(f"Опыт работы: {vacancy_exp}\n<br>Требования: {requirement}\n<br>Обязанности: {responsibility}\n<br>Роль: {professional_roles}\n<br>Дата и Время Публикации: {published_at}\n<br>Компания: {company_name}\n<br>График Работы: {vacancy_employment}\n<br>Регион: {country}\n<br>Адрес: {vacancy_raw}\n<br>URL: {vacancy_url}\n<br>")
                     print("<br>")
+                    data_entry(int(vacancy_id), str(vacancy_title), str(vacancy_salary), str(vacancy_exp), str(vacancy_employment), str(vacancy_url), str(vacancy_raw), str(country), str(requirement), str(responsibility), str(professional_roles))
+        #закрытие бд
+        c.close()
+        conn.close()
     else:
         print(f"Request failed with status code: {response.status_code}")
 
 
 # Использование
 get_vacancies(in_name)
+
