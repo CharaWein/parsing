@@ -2,8 +2,9 @@
 
 import cgi
 import sqlite3
+import requests
 
-conn = sqlite3.connect('database.db')
+conn = sqlite3.connect('/serv/cgi-bin/database.db')
 c = conn.cursor()
  
 def create_table():
@@ -14,7 +15,6 @@ def data_entry(id, name, salary, experience, employment, url, adress, area, requ
     conn.commit()
 
 
-
 our_form = cgi.FieldStorage()
 
 in_name = our_form.getfirst("in_name", "...")
@@ -22,10 +22,8 @@ _area = our_form.getfirst("_area", "113")
 _published_at = our_form.getfirst("_published_at", "2000-01-01T00:00:00+0300")
 _company_name = our_form.getfirst("_company_name", "")
 
-print("Content-type: text/html")
+print("Content-Type: text/html; charset=utf-8")
 print()
-
-import requests
 
 #Защита от дураков
 in_name = in_name.replace("<", "")
@@ -80,7 +78,6 @@ def get_vacancies(keyword):
         conn.close()
     else:
         print(f"Request failed with status code: {response.status_code}")
-
 
 # Использование
 get_vacancies(in_name)
