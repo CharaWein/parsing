@@ -51,7 +51,7 @@ def get_vacancies(keyword):
     if response.status_code == 200:
         data = response.json()
         vacancies = data.get("items", [])
-        create_table() #Создание бд
+        #create_table() #Создание бд
         for vacancy in vacancies:
             published_at = vacancy.get("published_at")
             if published_at >= _published_at:
@@ -72,7 +72,7 @@ def get_vacancies(keyword):
                     print(f"Зарплата: {vacancy_salary}\n<br>") 
                     print(f"Опыт работы: {vacancy_exp}\n<br>Требования: {requirement}\n<br>Обязанности: {responsibility}\n<br>Роль: {professional_roles}\n<br>Дата и Время Публикации: {published_at}\n<br>Компания: {company_name}\n<br>График Работы: {vacancy_employment}\n<br>Регион: {country}\n<br>Адрес: {vacancy_raw}\n<br>URL: {vacancy_url}\n<br>")
                     print("<br>")
-                    data_entry(int(vacancy_id), str(vacancy_title), str(vacancy_salary), str(vacancy_exp), str(vacancy_employment), str(vacancy_url), str(vacancy_raw), str(country), str(requirement), str(responsibility), str(professional_roles))
+                    #data_entry(int(vacancy_id), str(vacancy_title), str(vacancy_salary), str(vacancy_exp), str(vacancy_employment), str(vacancy_url), str(vacancy_raw), str(country), str(requirement), str(responsibility), str(professional_roles))
         #закрытие бд
         c.close()
         conn.close()
